@@ -18,8 +18,20 @@ net.exe session 1>NUL 2>NUL || (Echo ERROR: This script requires elevated rights
 ECHO Starting Teams reinstall powershell script.
 ECHO --------------------------------------------
 ECHO.
-powershell.exe -ExecutionPolicy Bypass -File "%~dp0\Teams_Reinstall_PS_REQUIRED_DO_NOT_RUN.ps1"
-:: powershell.exe -ExecutionPolicy Bypass -File "C:\Users\Ryan_\OneDrive\Desktop\Batch Scripts\Software Repairs and Reinstalls\Teams\Teams_Uninstall_PS_REQUIRED_DO_NOT_RUN.ps1"
+
+IF EXIST "%~dp0\Teams_Reinstall_PS_REQUIRED_DO_NOT_RUN.ps1" (
+   powershell.exe -ExecutionPolicy Bypass -File "%~dp0\Teams_Reinstall_PS_REQUIRED_DO_NOT_RUN.ps1"
+) ELSE (
+  ECHO.
+  ECHO ERROR: Powershell script "Teams_Reinstall_PS_REQUIRED_DO_NOT_RUN.ps1" was not found. Was the file moved or renamed?
+  ECHO Please ensure the Powershell Script is in the same directory as this batch file and try again.
+  ECHO Script aborted.
+
+  PAUSE
+  EXIT
+)
+
+
 :: END POWERSHELL SCRIPT
 :: ----------------------------------------------------------------------------------------------------------------------
 ECHO Done.

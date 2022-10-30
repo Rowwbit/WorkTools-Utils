@@ -92,7 +92,7 @@ Write-Host "--------------------------------------------------------------------
 ## Remove the all users' cache. This reads all user subdirectories in each user folder matching
 ## all folder names in the cache and removes them all
 
-Write-Host "Attempting to clear Teams cache files..." -ForegroundColor Green
+Write-Host "Attempting to clear Teams cache files..." -ForegroundColor Yellow
 
 try {
 Get-ChildItem -Path "C:\Users\*\AppData\Roaming\Microsoft\Teams\*" -Directory | `
@@ -128,7 +128,7 @@ Write-Host "--------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------
 #	INSTALL TEAMS
 #-------------------------------------------------------------------------------------------------------------
-Write-Host "Retrieving MS Teams install file from web..." -ForegroundColor Green
+Write-Host "Retrieving MS Teams install file from web..." -ForegroundColor Yellow
 try {
 	 (New-Object System.Net.WebClient).DownloadFile($TeamsInstallerURL, $DownloadsFolderPath + "\TeamsInstaller.exe")
 	 Write-Host "Download successful. Executing teams installer." -ForegroundColor Green
@@ -137,7 +137,7 @@ try {
 catch {
 	   Write-Error "Error Attempting to download Teams installer. Please check internet or website connectivity issues and try again later."
 	   Write-Error $_.Exception.Message
-         Write-Host "You can also go directly to the Teams install page here: https://www.microsoft.com/en-us/microsoft-teams/download-app#desktopAppDownloadregion" -ForegroundColor Magenta
+       Write-Host "You can also go directly to the Teams install page here: https://www.microsoft.com/en-us/microsoft-teams/download-app#desktopAppDownloadregion" -ForegroundColor Magenta
        }
 
 Write-Host ""
