@@ -1,8 +1,11 @@
 #-------------------------------------------------------------------------------------------------------------
 #	INITIALIZATION
 #-------------------------------------------------------------------------------------------------------------
+cd C:\
 $DownloadsFolderPath = (New-Object -ComObject Shell.Application).NameSpace('shell:Downloads').Self.Path
 $TeamsInstallerURL = "https://go.microsoft.com/fwlink/p/?LinkID=2187327&clcid=0x409&culture=en-us&country=US"
+$RawUserName = (Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object -Property UserName)
+$UserName = $RawUserName.Username.split("\"" ", 2).GetValue(1).ToString().Replace('}','')
 
 function unInstallTeams($path) {
 
@@ -54,9 +57,8 @@ else
 #	REMOVE TEAMS
 #-------------------------------------------------------------------------------------------------------------
 
-$localAppData = "$($env:LOCALAPPDATA)\Microsoft\Teams"
-
-$programData = "$($env:ProgramData)\$($env:USERNAME)\Microsoft\Teams"
+$localAppData = "$("C:\Users\$Username\AppData\Local")\Microsoft\Teams"
+$programData = "$($env:ProgramData)\$($Username)\Microsoft\Teams"
 
 Write-Host "---" -ForegroundColor Green
 Write-Host "Checking for Teams installation..." -ForegroundColor Yellow
@@ -89,41 +91,24 @@ Write-Host "--------------------------------------------------------------------
 #	REMOVE ALL CACHE FOLDERS
 #-------------------------------------------------------------------------------------------------------------
 
-## Remove the all users' cache. This reads all user subdirectories in each user folder matching
-## all folder names in the cache and removes them all
-
+## 
+## 
 Write-Host "Attempting to clear Teams cache files..." -ForegroundColor Yellow
 
 try {
-Get-ChildItem -Path "C:\Users\*\AppData\Roaming\Microsoft\Teams\*" -Directory | `
+Get-ChildItem -Path "C:\Users\$Username\AppData\Roaming\Microsoft\Teams\*" -Directory | `
 	Where-Object Name -in ('application cache','blob_storage','databases','GPUcache','IndexedDB','Local Storage','tmp') | `
 	ForEach {Remove-Item $_.FullName -Recurse -Force}
-    }
 
+    Write-Host ""
+    Write-Host "Teams cache process complete." -ForegroundColor DarkYellow
+    Write-Host "-------------------------------------------------------------------------" -ForegroundColor Green
+    }
 catch {
 	   Write-Error "Cache deletion has encountered an unknown error. Cache removal aborted."
-	   Write-Error "This error occured in section A. (C:\Users\*\AppData\Roaming\Microsoft\Teams\*)"
  	   Write-Error $_.Exception.Message
       }
 
-
-## Remove every user's cache. This reads all subdirectories in the $env:APPDATA\Microsoft\Teams folder matching
-## all folder names in the cache and removes them all
-try {
-Get-ChildItem -Path "$env:APPDATA\Microsoft\Teams\*" -Directory | `
-	Where-Object Name -in ('application cache','blob storage','databases','GPUcache','IndexedDB','Local Storage','tmp') | `
-	ForEach {Remove-Item $_.FullName -Recurse -Force}
-    }
-
-catch {
-	   Write-Error "Cache deletion has encountered an unknown error. Cache removal aborted."
-	   Write-Error "This error occured in section B. ($env:APPDATA\Microsoft\Teams\*)"
- 	   Write-Error $_.Exception.Message
-      }
-
-Write-Host ""
-Write-Host "Teams cache process complete." -ForegroundColor DarkYellow
-Write-Host "-------------------------------------------------------------------------" -ForegroundColor Green
 
 #-------------------------------------------------------------------------------------------------------------
 #	INSTALL TEAMS
