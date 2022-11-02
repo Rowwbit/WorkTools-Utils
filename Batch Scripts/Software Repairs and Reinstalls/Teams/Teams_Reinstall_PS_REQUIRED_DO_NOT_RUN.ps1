@@ -2,10 +2,11 @@
 #	INITIALIZATION
 #-------------------------------------------------------------------------------------------------------------
 cd C:\
-$DownloadsFolderPath = (New-Object -ComObject Shell.Application).NameSpace('shell:Downloads').Self.Path
-$TeamsInstallerURL = "https://go.microsoft.com/fwlink/p/?LinkID=2187327&clcid=0x409&culture=en-us&country=US"
 $RawUserName = (Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object -Property UserName)
 $UserName = $RawUserName.Username.split("\"" ", 2).GetValue(1).ToString().Replace('}','')
+$DownloadsFolderPath = $("C:\Users\$Username\Downloads")
+$TeamsInstallerURL = "https://go.microsoft.com/fwlink/p/?LinkID=2187327&clcid=0x409&culture=en-us&country=US"
+
 
 function unInstallTeams($path) {
 
@@ -20,7 +21,7 @@ function unInstallTeams($path) {
  {
 
  Write-Error "UnInstallation failed with exit code $($process.ExitCode)."
-
+ Write-Error "Attempted to find update.exe at: $clientInstaller)."
  }
 
  }
@@ -57,13 +58,13 @@ else
 #	REMOVE TEAMS
 #-------------------------------------------------------------------------------------------------------------
 
-$localAppData = "$("C:\Users\$Username\AppData\Local")\Microsoft\Teams"
+$localAppData = "$("C:\Users\$Username\AppData\Local\Microsoft\Teams")"
 $programData = "$($env:ProgramData)\$($Username)\Microsoft\Teams"
 
 Write-Host "---" -ForegroundColor Green
 Write-Host "Checking for Teams installation..." -ForegroundColor Yellow
 
-
+# Check if Teams is installed in Program data or User local appdata
 If (Test-Path "$($localAppData)\Current\Teams.exe")
 
 {
@@ -91,8 +92,7 @@ Write-Host "--------------------------------------------------------------------
 #	REMOVE ALL CACHE FOLDERS
 #-------------------------------------------------------------------------------------------------------------
 
-## 
-## 
+## Loop through cache folders for the user and remove files.
 Write-Host "Attempting to clear Teams cache files..." -ForegroundColor Yellow
 
 try {
@@ -102,13 +102,13 @@ Get-ChildItem -Path "C:\Users\$Username\AppData\Roaming\Microsoft\Teams\*" -Dire
 
     Write-Host ""
     Write-Host "Teams cache process complete." -ForegroundColor DarkYellow
-    Write-Host "-------------------------------------------------------------------------" -ForegroundColor Green
     }
 catch {
 	   Write-Error "Cache deletion has encountered an unknown error. Cache removal aborted."
  	   Write-Error $_.Exception.Message
       }
 
+Write-Host "-------------------------------------------------------------------------" -ForegroundColor Green
 
 #-------------------------------------------------------------------------------------------------------------
 #	INSTALL TEAMS

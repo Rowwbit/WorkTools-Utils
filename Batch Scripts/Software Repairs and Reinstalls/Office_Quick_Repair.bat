@@ -1,5 +1,5 @@
 cls
-:: This batch file does a quick repair on MS office.
+:: This batch file does a quick repair on MS office 15.
 @ECHO OFF
 ECHO --------------------------
 ECHO -  Script Author: R.F.   -
@@ -13,7 +13,8 @@ color 0a
 net.exe session 1>NUL 2>NUL || (Echo ERROR: This script requires elevated rights. Exiting... & PAUSE & Exit /b 1)
 
 ECHO Sending request for repair.
-"C:\Program Files\Microsoft Office 15\ClientX64\OfficeClickToRun.exe" scenario=Repair culture=en-us RepairType=QuickRepair DisplayLevel=True
+cd C:\Program Files\Microsoft Office 15\ClientX64\
+OfficeClickToRun.exe scenario=Repair culture=en-us RepairType=QuickRepair DisplayLevel=True
 
 
 ECHO Done. Quick repair launcher triggered.
