@@ -65,20 +65,17 @@ Write-Host "---" -ForegroundColor Green
 Write-Host "Checking for Teams installation..." -ForegroundColor Yellow
 
 # Check if Teams is installed in Program data or User local appdata
-If (Test-Path "$($localAppData)\Current\Teams.exe")
-
+if (Test-Path "$($localAppData)\Current\Teams.exe")
 {
 
  unInstallTeams($localAppData)
  Write-Host "Teams successfully removed in LocalAppData." -ForegroundColor DarkYellow
 }
-
 elseif (Test-Path "$($programData)\Current\Teams.exe") {
 
  unInstallTeams($programData)
  Write-Host "Teams successfully removed in ProgramData." -ForegroundColor DarkYellow
 }
-
 else {
 
  Write-Host "Teams installation not found. Continuing reinstall process." -ForegroundColor DarkYellow
