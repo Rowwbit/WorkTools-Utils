@@ -2,34 +2,31 @@
 #	INITIALIZATION
 #-------------------------------------------------------------------------------------------------------------
 cd C:\
+Stop-Process -Name "Teams" -Force -ErrorAction SilentlyContinue
+
 $RawUserName = (Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object -Property UserName)
 $UserName = $RawUserName.Username.split("\"" ", 2).GetValue(1).ToString().Replace('}','')
 $DownloadsFolderPath = $("C:\Users\$Username\Downloads")
 $TeamsInstallerURL = "https://go.microsoft.com/fwlink/p/?LinkID=2187327&clcid=0x409&culture=en-us&country=US"
 
 
-function unInstallTeams($path) {
+function unInstallTeams($path)
+{
 
  $clientInstaller = "$($path)\Update.exe"
 
- try {
-
- $process = Start-Process -FilePath "$clientInstaller" "--uninstall /s" -PassThru -Wait -ErrorAction STOP
-
- if ($process.ExitCode -ne 0)
-
+ try 
  {
+    $process = Start-Process -FilePath "$clientInstaller" "--uninstall /s" -PassThru -Wait -ErrorAction STOP
 
- Write-Error "UnInstallation failed with exit code $($process.ExitCode)."
- Write-Error "Attempted to find update.exe at: $clientInstaller)."
+    if($process.ExitCode -eq 0){Write-Host "Teams successfully removed at: $clientInstaller" -ForegroundColor DarkYellow}
  }
 
- }
-
- catch {
-
- Write-Error $_.Exception.Message
-
+ catch 
+ {
+    Write-Host ""
+    Write-Host "ERROR:Could not find or execute 'Update.exe' at: $clientInstaller." -ForegroundColor Red
+    Write-Host "Uninstallation failed." -ForegroundColor Red
  }
 
 }
@@ -66,18 +63,17 @@ Write-Host "Checking for Teams installation..." -ForegroundColor Yellow
 
 # Check if Teams is installed in Program data or User local appdata
 if (Test-Path "$($localAppData)\Current\Teams.exe")
-{
-
+ {
  unInstallTeams($localAppData)
- Write-Host "Teams successfully removed in LocalAppData." -ForegroundColor DarkYellow
-}
-elseif (Test-Path "$($programData)\Current\Teams.exe") {
+ }
 
+elseif (Test-Path "$($programData)\Current\Teams.exe")
+ {
  unInstallTeams($programData)
- Write-Host "Teams successfully removed in ProgramData." -ForegroundColor DarkYellow
-}
-else {
+ }
 
+else 
+{
  Write-Host "Teams installation not found. Continuing reinstall process." -ForegroundColor DarkYellow
 }
 

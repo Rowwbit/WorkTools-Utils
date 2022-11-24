@@ -24,7 +24,7 @@ while ($Index -ne $AdapterNamesArry.Count)
 {
     
     Write-Host "Attempting to disable IPV6 on: $($AdapterNamesArry[$($Index)]) adapter."
-    try{Disable-NetAdapterBinding -Name "$($AdapterNamesArry[$Index])" -ComponentID ms_tcpip6}
+    try{Disable-NetAdapterBinding -Name "$($AdapterNamesArry[$Index])" -ComponentID ms_tcpip6 -ErrorAction Stop}
     catch
     {
         Write-Host "Error on: $($AdapterNamesArry[$Index])"
